@@ -240,6 +240,16 @@ impl TextMark {
         self.link = Some(link.into());
         self
     }
+
+    pub fn merge(&mut self, other: TextMark) {
+        self.bold |= other.bold;
+        self.italic |= other.italic;
+        self.strikethrough |= other.strikethrough;
+        self.code |= other.code;
+        if let Some(link) = other.link {
+            self.link = Some(link);
+        }
+    }
 }
 
 /// The bytes
@@ -513,7 +523,7 @@ impl CodeBlock {
         let mut styles = vec![];
         if let Some(lang) = &lang {
             let mut highlighter = SyntaxHighlighter::new(&lang);
-            highlighter.update(None, &Rope::from_str(code.as_str()));
+            highlighter.update(None, &Rope::from_str(code.as_str()), None);
             styles = highlighter.styles(&(0..code.len()), highlight_theme);
         };
 
